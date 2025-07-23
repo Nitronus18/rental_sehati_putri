@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    background-color: #F6F2ED;
+    font-family: 'Poppins', sans-serif;
+  }
+  .menu-card {
+    background-color: #fff;
+    border-radius: 22px;
+    box-shadow: 0 4px 14px rgba(17, 17, 17, 0.12);
+    padding: 2rem 1rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: #272727;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .menu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(17, 17, 17, 0.18);
+  }
+  .menu-card i {
+    font-size: 2.2rem;
+    color: #4B2C20;
+    margin-bottom: 0.6rem;
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+</style>
+
+<div class="text-center mb-4">
+  <img src="{{ url_for('static', filename='img/logo-placeholder.png') }}" alt="Logo" style="max-width: 100px;" class="mb-3">
+  <h2>Admin Persewaan Baju 👗</h2>
+  <p class="text-muted">Silakan pilih menu utama</p>
+</div>
+
+<div class="menu-grid">
+  <a href="/stok" class="menu-card">
+    <i class="bi bi-box"></i>
+    <div class="fw-semibold mt-2">🔧 Stok Rental</div>
+  </a>
+  <a href="/booking" class="menu-card">
+    <i class="bi bi-calendar-check"></i>
+    <div class="fw-semibold mt-2">📋 Booking</div>
+  </a>
+  <a href="/rental" class="menu-card">
+    <i class="bi bi-hourglass-split"></i>
+    <div class="fw-semibold mt-2">📑 Rental Aktif</div>
+  </a>
+  <a href="/pengembalian" class="menu-card">
+    <i class="bi bi-arrow-return-left"></i>
+    <div class="fw-semibold mt-2">↩️ Pengembalian</div>
+  </a>
+  <a href="/laporan" class="menu-card">
+    <i class="bi bi-graph-up"></i>
+    <div class="fw-semibold mt-2">📈 Laporan</div>
+  </a>
+  <a href="/saldo" class="menu-card">
+    <i class="bi bi-wallet2"></i>
+    <div class="fw-semibold mt-2">💰 Saldo Harian</div>
+  </a>
+  <a href="/audit-log" class="menu-card">
+    <i class="bi bi-shield-check"></i>
+    <div class="fw-semibold mt-2">🔒 Audit Log</div>
+  </a>
+  <a href="/pengaturan" class="menu-card">
+    <i class="bi bi-gear"></i>
+    <div class="fw-semibold mt-2">⚙️ Pengaturan</div>
+  </a>
+</div>
+{% endblock %}
