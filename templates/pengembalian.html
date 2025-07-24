@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Daftar Pengembalian{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-2 mb-5">
+  <div class="text-center mb-4">
+    <h2>Daftar Pengembalian</h2>
+    <p class="text-muted">Cek dan konfirmasi baju yang telah dikembalikan</p>
+  </div>
+
+  <!-- 🔍 Form Filter -->
+  <form method="get" action="{{ url_for('pengembalian') }}" class="row g-3 mb-4 justify-content-center">
+    <div class="col-md-4">
+      <input type="text" name="nama" class="form-control" placeholder="Cari nama penyewa" value="{{ request.args.get('nama', '') }}">
+    </div>
+    <div class="col-md-3">
+      <input type="date" name="tanggal" class="form-control" value="{{ request.args.get('tanggal', '') }}">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-secondary w-100">
+        <i class="bi bi-search"></i> Cari
+      </button>
+    </div>
+  </form>
+
+  <p class="text-muted text-center mb-2">
+    Total: {{ daftar_pengembalian|length }} data
+  </p>
+
+  <div class="table-responsive">
+    <table class="table table-bordered bg-white shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th class="text-center">No</th>
+          <th>Nama</th>
+          <th>Barang</th>
+          <th>Tanggal Kembali</th>
+          <th>Tanggal Maksimal</th>
+          <th>Denda</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in daftar_pengembalian %}
+        <tr>
+          <td class="text-center">{{ loop.index }}</td>
+          <td>{{ item.nama_penyewa }}</td>
+          <td>{{ item.nama_barang }}</td>
+          <td>{{ item.tanggal_kembali }}</td>
+          <td>{{ item.tanggal_kembali }}</td>
+          <td>
+            {% if item.terlambat %}
+              <span class="text-danger fw-bold">Rp 50.000</span>
+            {% else %}
+              <span class="text-muted">-</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if item.status == 'kembali' %}
+              <span class="badge bg-success">Sudah</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Belum</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if item.status != 'kembali' %}
+              <form method="POST" action="{{ url_for('konfirmasi_pengembalian') }}">
+                <input type="hidden" name="id_rental" value="{{ item.id }}">
+                <button type="submit" class="btn btn-sm btn-success">
+                  <i class="bi bi-check-circle"></i> Konfirmasi
+                </button>
+              </form>
+            {% else %}
+              <span class="text-muted"><i class="bi bi-check2"></i></span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ✅ Modal Pop-up -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="modal fade" id="popupKonfirmasi" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+          <div class="modal-header">
+            <h5 class="modal-title">Berhasil</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" data-bs-dismiss="modal">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% block script_extra %}
+    <script>
+      const modal = new bootstrap.Modal(document.getElementById('popupKonfirmasi'));
+      window.onload = () => modal.show();
+    </script>
+    {% endblock %}
+  {% endif %}
+{% endwith %}
+{% endblock %}

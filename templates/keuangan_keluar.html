@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Laporan Pengeluaran{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+  <h2>📤 Laporan Pengeluaran</h2>
+  <p class="text-muted">Data pengeluaran keuangan dari stok atau kebutuhan lainnya</p>
+</div>
+
+    <!-- 🔍 Form Filter + Tombol Tambah -->
+    <form method="get" class="row g-2 mb-4 justify-content-center align-items-center">
+    <div class="col-md-3">
+        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#modalTambah">
+        <i class="bi bi-plus-circle"></i> Tambah Pengeluaran
+        </button>
+    </div>
+    <div class="col-md-3">
+        <input type="text" name="q" value="{{ request.args.get('q', '') }}" class="form-control" placeholder="Cari keterangan...">
+    </div>
+    <div class="col-md-2">
+        <input type="date" name="tanggal" value="{{ request.args.get('tanggal', '') }}" class="form-control">
+    </div>
+    <div class="col-md-2 d-flex">
+        <button type="submit" class="btn btn-danger me-2 w-100">
+        <i class="bi bi-search"></i> Filter
+        </button>
+        <a href="?q={{ request.args.get('q', '') }}&tanggal={{ request.args.get('tanggal', '') }}&export=excel"
+        class="btn btn-outline-danger w-100">
+        <i class="bi bi-download"></i> Excel
+        </a>
+    </div>
+    </form>
+
+
+<!-- 📋 Tabel Data -->
+<div class="table-responsive mb-3">
+  <table class="table table-bordered bg-white shadow-sm">
+    <thead class="table-light text-center">
+    <tr>
+        <th>No</th>
+        <th>Keterangan</th>
+        <th>Tanggal</th>
+        <th class="text-end">Nominal</th>
+        <th class="text-center">Aksi</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if data %}
+        {% for row in data %}
+        <tr>
+        <td class="text-center">{{ loop.index }}</td>
+        <td>{{ row[3] }}</td>
+        <td>{{ row[1] }}</td>
+        <td class="text-end">{{ "{:,.0f}".format(row[9]|int) }}</td>
+        <td class="text-center">
+            <form method="POST" action="{{ url_for('hapus_pengeluaran', id=row[0]) }}" onsubmit="return confirm('Yakin ingin menghapus data ini?')" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i> Hapus
+            </button>
+            </form>
+        </td>
+        </tr>
+        {% endfor %}
+    {% else %}
+    <tr>
+        <td colspan="5" class="text-center text-muted">Tidak ada data pengeluaran.</td>
+    </tr>
+    {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- 🔢 Total -->
+<div class="d-flex justify-content-end mt-3">
+  <div class="bg-danger-subtle border border-danger rounded px-4 py-3 shadow-sm d-flex justify-content-between align-items-center" style="min-width: 360px;">
+    <span class="text-danger fw-semibold">Total Pengeluaran :</span>
+    <span class="fw-bold text-danger fs-5">
+      Rp. {{ "{:,.0f}".format(total) }}
+    </span>
+  </div>
+</div>
+
+
+
+<!-- 📦 Modal Tambah Pengeluaran -->
+<div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="{{ url_for('tambah_pengeluaran') }}" method="post" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTambahLabel">Tambah Pengeluaran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="tanggal" class="form-label">Tanggal</label>
+          <input type="date" name="tanggal" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="keterangan" class="form-label">Keterangan</label>
+          <input type="text" name="keterangan" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="nominal" class="form-label">Nominal (Rp)</label>
+          <input type="number" name="nominal" class="form-control" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Laporan Masuk{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+  <h2>📥 Laporan Pemasukan</h2>
+  <p class="text-muted">Data pemasukan keuangan dari transaksi penyewaan</p>
+</div>
+
+<!-- 🔍 Form Filter -->
+<form method="get" class="row g-2 mb-4 justify-content-center">
+  <div class="col-md-4">
+    <input type="text" name="q" value="{{ request.args.get('q', '') }}" class="form-control" placeholder="Cari nama penyewa...">
+  </div>
+  <div class="col-md-3">
+    <input type="date" name="tanggal" value="{{ request.args.get('tanggal', '') }}" class="form-control">
+  </div>
+  <div class="col-md-2 d-flex">
+    <button type="submit" class="btn btn-success me-2 w-100">
+      <i class="bi bi-search"></i> Filter
+    </button>
+    <a href="?q={{ request.args.get('q', '') }}&tanggal={{ request.args.get('tanggal', '') }}&export=excel"
+       class="btn btn-outline-success w-100">
+      <i class="bi bi-download"></i> Excel
+    </a>
+  </div>
+</form>
+
+<!-- 📋 Tabel Data -->
+<div class="table-responsive mb-3">
+  <table class="table table-bordered bg-white shadow-sm">
+    <thead class="table-light text-center">
+      <tr>
+        <th>No</th>
+        <th>Nama Penyewa</th>
+        <th>Barang</th>
+        <th>Ukuran</th>
+        <th>Jumlah</th>
+        <th>Tanggal Mulai</th>
+        <th>Tanggal Dikembalikan</th>
+        <th>No. Loker</th>
+        <th class="text-end">Nominal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in data %}
+      <tr>
+        <td class="text-center">{{ loop.index }}</td>
+        <td>{{ item.nama_penyewa }}</td>
+        <td>{{ item.nama_barang }}</td>
+        <td>{{ item.ukuran }}</td>
+        <td class="text-center">{{ item.jumlah }}</td>
+        <td>{{ item.tanggal_mulai }}</td>
+        <td>{{ item.tanggal_dikembalikan }}</td>
+        <td>{{ item.no_loker }}</td>
+        <td class="text-end">{{ "{:,.0f}".format(item.nominal) }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="9" class="text-center text-muted">Tidak ada data pemasukan.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- 🔢 Total -->
+<div class="d-flex justify-content-end mt-3">
+  <div class="bg-success-subtle border border-success rounded px-4 py-3 shadow-sm d-flex justify-content-between align-items-center" style="min-width: 360px;">
+    <span class="text-success fw-semibold">Total Pengeluaran :</span>
+    <span class="fw-bold text-success fs-5">
+      Rp. {{ "{:,.0f}".format(total) }}
+    </span>
+  </div>
+</div>
+
+
+
+{% endblock %}

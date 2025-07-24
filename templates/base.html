@@ -1,66 +1,180 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% block title %}Persewaan Baju{% endblock %}</title>
 
-  <!-- Bootstrap 5 -->
+  <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- Google Fonts: Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Font Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg-primary: #F6F2ED;
+      --color-text: #272727;
+      --color-dark: #4B2C20;
+    }
+
     body {
-      background-color: #F6F2ED;
+      background-color: var(--bg-primary);
       font-family: 'Poppins', sans-serif;
+      color: var(--color-text);
     }
-    h1, h2, h3, h4, h5, h6 {
+
+    .sidebar {
+      min-height: 100vh;
+      background-color: #fff;
+      box-shadow: 2px 0 12px rgba(0,0,0,0.05);
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+
+    .sidebar h4 {
       font-weight: 700;
+      color: var(--color-dark);
     }
-    .navbar-brand {
-      font-weight: 700;
-      color: #4B2C20 !important;
+
+    .nav-link {
+      font-weight: 500;
+      color: #444;
     }
+
+    .nav-link:hover {
+      color: var(--color-dark);
+    }
+
     .nav-link.active {
-      font-weight: 600;
-      color: #4B2C20 !important;
+      background-color: #F6F2ED;
+      border-radius: 12px;
+    }
+
+    input.form-control,
+    select.form-select,
+    textarea.form-control {
+      border-radius: 5px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+      box-shadow: 0px 4px 14px rgba(17, 17, 17, 0.12);
+    }
+
+    button.btn,
+    a.btn {
+      border-radius: 22px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      box-shadow: 0px 4px 14px rgba(17, 17, 17, 0.12);
+    }
+
+    .btn-primary {
+      background-color: #4B2C20;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #3A2317;
+    }
+
+    .toast {
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
     }
   </style>
-
-  {% block head %}{% endblock %}
 </head>
+
 <body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-2 sidebar p-3">
+      <h4 class="text-center mb-4">👗 Persewaan</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a class="nav-link {% if active_page == 'admin' %}active fw-bold text-dark{% endif %}" href="/admin">🏠 Dashboard</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link {% if active_page == 'stok' %}active fw-bold text-dark{% endif %}" href="/stok">📦 Stok Rental</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link {% if active_page == 'booking' %}active fw-bold text-dark{% endif %}" href="/booking">📋 Booking</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link {% if active_page == 'rental' %}active fw-bold text-dark{% endif %}" href="/rental">📑 Rental Aktif</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link {% if active_page == 'pengembalian' %}active fw-bold text-dark{% endif %}" href="/pengembalian">↩️ Pengembalian</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link fw-bold text-dark d-flex justify-content-between align-items-center {% if active_page in ['keuangan_masuk', 'keuangan_keluar'] %}active{% endif %}"
+            data-bs-toggle="collapse" href="#submenuKeuangan" role="button" aria-expanded="false" aria-controls="submenuKeuangan">
+            💰 Keuangan
+            <i class="bi bi-chevron-down small"></i>
+          </a>
+          <div class="collapse {% if active_page in ['keuangan_masuk', 'keuangan_keluar'] %}show{% endif %}" id="submenuKeuangan">
+            <ul class="nav flex-column ms-3 mt-1">
+              <li class="nav-item">
+                <a class="nav-link {% if active_page == 'keuangan_masuk' %}active fw-bold text-dark{% endif %}" href="/keuangan/masuk">📥 Laporan Pemasukan</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if active_page == 'keluar' %}active{% endif %}" href="{{ url_for('laporan_keluar') }}">📥Laporan Pengeluaran</a>
 
-  <!-- Navbar Top (opsional) -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-3">
-    <div class="container">
-      <a class="navbar-brand" href="/admin">📋 Persewaan Baju</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link {% if active_page == 'pengaturan' %}active fw-bold text-dark{% endif %}" href="/pengaturan">⚙️ Pengaturan</a>
+        </li>
+      </ul>
     </div>
-  </nav>
 
-  <div class="container mb-5">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="alert alert-success">
-          {{ messages[0] }}
-        </div>
-      {% endif %}
-    {% endwith %}
+    <!-- Konten -->
+    <div class="col-md-10 p-4">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="alert alert-success">{{ messages[0] }}</div>
+        {% endif %}
+      {% endwith %}
 
-    {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
+    </div>
   </div>
+</div>
 
-  <!-- Bootstrap Bundle (JS + Popper) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  {% block scripts %}{% endblock %}
+<!-- Toast -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+  <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {{ messages[0] }}
+          {% endif %}
+        {% endwith %}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    var toastEl = document.getElementById('liveToast');
+    if (toastEl && toastEl.querySelector('.toast-body').innerText.trim() !== '') {
+      var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+      toast.show();
+    }
+  });
+</script>
+
+{% block scripts %}{% endblock %}
 </body>
 </html>
